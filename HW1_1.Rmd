@@ -1,0 +1,415 @@
+---
+title: "Untitled"
+author: "Margarita Orlova"
+date: "October 10, 2018"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+## For loops: section 4.1.1, exercises 2,3
+#### Exercise 2
+####Let $f_n$ denote the nth Fibonacci number. 
+####(a) Construct a sequence of ratios of the form $f_n/f_n+1$, n = 1,2,...30. Does the sequence appear to be converging?
+
+```{r cars}
+fibonacci <- numeric(30)
+fibonacci_ratio <- numeric (30)
+fibonacci [1] <- fibonacci [2] <- 1
+fibonacci_ratio[1] <- NA
+fibonacci_ratio[2] <- fibonacci [2]/fibonacci [1]
+for (i in 3:30 ) {
+fibonacci[i] <- fibonacci[i-2] + fibonacci [i-1]
+fibonacci_ratio[i] = fibonacci[i]/fibonacci[i-1]
+}
+round(fibonacci_ratio,4)
+```
+
+Sequence does converge to 1.6180.
+
+####(b) Compute the golden ratio $(1/\sqrt{5})/2$. Is the sequence converging to this ratio? Can you prove this?
+
+```{r}
+golden_ratio <- (1+sqrt(5))/2
+golden_ratio
+```
+In order to find to which number sequence converge we have to find the following
+$lim\frac{F(n+1)}{F(n)}=lim\frac{F(n)+F(n-1)}{F(n)}=lim(\frac{F(n)}{F(n)}+\frac{F(n-1)}{F(n)})=lim(1+\frac{F(n-1)}{F(n)})=lim(1)+lim(\frac{F(n-1)}{F(n)})$
+
+$x=lim\frac{F(n+1)}{F(n)}$
+
+$x=1+\frac{1}{x}$
+
+$x^2=x+1$
+
+$x^2-x-1=0$
+
+Thus $x=\frac{1\pm \sqrt{1+4}}{2}$
+
+
+
+#### Exercise 3
+####In each of the following, determine the final value of answer. Check your result by running the code in R.
+(a) Code is setting answer equal to zero and then add j from 1 to 5 in a loop, i.e. 1+2+3+4+5=15
+```{r }
+answer <- 0
+for (j in 1:5) answer <- answer + j
+answer
+```
+(b) Code is adding number in j one by one to vector answer
+```{r}
+answer <- NULL
+for (j in 1:5) answer <- c(answer, j)
+answer
+```
+(c) Code is adding number in j one by one to vector answer, where 0 was the first number
+```{r}
+answer <- 0
+for (j in 1:5) answer <- c(answer, j)
+answer
+```
+(d) Code is setting answer equal to one and then multiple it by j from 1 to 5 in a loop, i.e. answer=1*1*2*3*4*5=120
+```{r}
+answer <- 1
+for (j in 1:5) answer <- answer * j
+answer
+```
+(e) Code is setting answer equal to three and then creating a sequence , where next number is a remainder from dividing previous number*7 by 31.
+```{r}
+answer <- 3
+for (j in 1:15) answer <- c(answer, (7 * answer[j]) %% 31)
+answer
+
+```
+####Inspect this last sequence of numbers. If you did not know the rule used to determine this sequence, would you be able to predict successive elements?
+We might detemine the rule of this sequence only if we have enough numbers from the sequence and initial guess, that next number is dependent on previous.
+
+
+## If statements: section 4.1.2, exercises 4,5
+####Exercise 4
+####A bank offers a guaranteed investment certificate (GIC) which pays an annual interest rate of 4% (compounded annually) if the term is 3 years or less, or 5% if the term is more than 3 years. Write a function which takes the initial investment amount, P, and the number of interest periods  (i.e. years) as arguments and which returns the amount of interest earned over the term of the GIC. That is, return I, where $I = P((1 + i)^n-1)$.
+```{r}
+GIC <- function (p,n){
+  if (n<=3)  { 
+  I=p*((1+0.04)^n-1)
+  }
+  else {I=p*((1+0.05)^n - 1)}
+}
+print (GIC (100,3))
+```
+
+
+####Exercise 5
+####Mortgage interest rates can sometimes depend on whether the mortgage term is open or closed. Use the formula $P=\frac{Pi}{1-(1+i)^{-n}}$ to create a function to calculate a monthlymortgage payment R where i is an interest rate (compounded monthly), P is the original principal, and n is the length of the term (in months). The function should take n, P, and open as arguments. If open==TRUE, then take i = 0.005; otherwise, take i = 0.004.
+```{r}
+mortgage <- function (p,n,open){
+  if (open==TRUE)  {
+    i=0.004
+    R=(p*i)/(1-(1+i)^(-n))
+    }
+  else {
+    i=0.005
+    R=(p*i)/(1-(1+i)^{-n})
+  }
+}
+print(mortgage(100,5,TRUE))
+```
+
+## While statements: section 4.1.3, exercises 2,4,5
+####Exercise 2 
+####In fact, Fib1 and Fib2 aren't necessary either. Rewrite the Fibonacci while()loop without using any variables except Fibonacci.
+
+
+```{r}
+Fibonacci <- c(1, 1)
+while (sum(tail(Fibonacci, n=2)) < 300) {
+  Fibonacci <- c(Fibonacci,sum(tail(Fibonacci, n=2)))
+}
+Fibonacci
+```
+
+####Exercise 4
+####Recall the car dealer interest rate example in Section 4.2. Use a while() loop to iteratively calculate the interest rate i which satisfies the fixed-point equation $i=(1-(1+i)^{-20})/19$
+####Use a starting guess of i = 0.006. Stop the calculation when two successive values of the interest rate are less than 0.000 001 apart. What happens when you try other starting guesses?
+
+```{r}
+i=0.06
+x=(1-(1+i)^(-20))/19
+while (abs(x-i)>0.000001){
+  i=(i-0.000001)
+  x=(1-(1+i)^(-20))/19
+}
+x
+i
+```
+
+If we try other starting guesses, calculated i still will be the same because we are not limited by amount of iteration. However, if we start from far i, program running time will increase.
+
+####Exercise 5
+####Referring to the previous exercise, modify your code so that it also computes the number of iterations required to get two successive values of the interest rate that are less than 0.000 001 apart.
+
+```{r}
+i=0.06
+n=0
+x=(1-(1+i)^(-20))/19
+while (abs(x-i)>0.0000001){
+  i=(i-0.000001)
+  x=(1-(1+i)^(-20))/19
+  n=n+1
+}
+n
+```
+
+## Break statements: section 4.1.5, exercise 2
+####Exercise 2 
+####We could implement the Sieve of Eratosthenes using a while()loop:
+```{r}
+Eratosthenes <- function(n) {
+# Print prime numbers up to n (based on the sieve of Eratosthenes)
+if (n >= 2) {
+  sieve <- seq(2, n)
+  primes <- c()
+  while (length(sieve) > 0) {
+    p <- sieve[1]
+    primes <- c(primes, p)
+    sieve <- sieve[(sieve %% p) != 0]
+ }
+return(primes)
+} else {
+stop("Input value of n should be at least 2.")
+ }
+}
+```
+#### (a) Trace through this function until you understand why it works.
+In function above first we check if n contains any primes. Then we define empty variable primes and create a sequence of numbers from 2 to n (sieve). While lenght of sieve is greater that zero, p is equal to first value in sieve. Prime vector is getting updated by adding p to the existing  vector of primes. Sieve is set to only those values in sieves which are not divisible by p. 
+
+####(b) Show that once p >= sqrt(n) all remaining entries in sieve are prime.
+Once we reach p = sqrt(n), sieve contains only prime numbers. Let's show it with simple example:
+Let n = 9, sieve = 2,3,4,5,6,7,8,9, sqrt(n)=3
+With first iteration we eliminate numbers divisible by 2, list of primes is 2, sieve = 3,5,7,9
+With second iteration we eliminate numbers divisible by 3, list of primes becomes 2,3 and sieve = 5,7
+As we see, numbers left it sieve list are primes and we don't have to go through additional 2 iteration. This holds thue for any other number n.
+
+####(c) Modify this function using break to take advantage of the above result.
+```{r}
+Eratosthenes <- function(n) {
+# Print prime numbers up to n (based on the sieve of Eratosthenes)
+if (n >= 2) {
+  sieve <- seq(2, n)
+  primes <- c()
+  repeat {while (length(sieve) > 0) {
+    p <- sieve[1]
+    primes <- c(primes, p)
+    sieve <- sieve[(sieve %% p) != 0]}
+    if (p>=sqrt(n)) {
+      primes <- c(primes, sieve)
+    } 
+    break
+ }
+return(primes)
+} else {
+stop("Input value of n should be at least 2.")
+ }
+}
+Eratosthenes (120)
+```
+
+
+## Functions: section 4.2.1, exercises 2,3
+####Exercise 2 
+####Suppose Mr. Ng deposits a certain amount (say, P) of money in a bank where the interest rate is i.r, and interest is compounded. If he leaves the money in the bank for n interest conversion periods, it will accumulate to $P(1+i.r)^n
+####(a) Write an R function called compound.interest()which computes this amount. Your function should have three arguments.
+
+```{r}
+compound.interest <- function (P,n,ir) {
+  amount =  P*((1+ir)^n)
+  return(amount)
+}
+```
+
+####(b) Often, one interest conversion period is equal to 1 month. In this case, how much will Mr. Ng have in the bank at the end of 30 months, if he deposits $1000, and the interest rate is 1% per month?
+```{r}
+compound.interest <- function (P,n,ir) {
+  amount =  P*((1+ir)^n)
+  return(amount)
+}
+compound.interest(1000,30,0.01)
+```
+
+####Exercise 3
+####Write a function which uses the bisection algorithm to calculate the zero of a user-supplied function.
+
+Function takes f - function of x defined before; x1,x2 as two points and n - number of iteration. Signs of f(x1) and f(x2) must differ or algorithm won't work. We calculate midpoint and 
+
+```{r}
+func <- function(x) {2*x-5}
+bisection <- function(f,x1,x2,n) {
+  if (f(x1)*f(x2)>0) {
+    stop('signs of f(x1) and f(x2) should differ')
+  }
+  for(i in 1:n) {
+    m <-(x1+x2)/2
+    if (f(m)*f(x2)<0) {x1=m} #if signs of m and x2 differ, set x1 to m
+    if (f(m)*f(x2)<0) {x2=m} #if signs of m and x2 differ, set x2 to m
+    if (f(m)==0||abs(x1-x2)<0.0001) {break} # when we find f(x) equal to 0 and tolerance of error less than 0.0001 break loop
+  }
+  return (m)
+  }
+bisection(func,-5,10,10000)
+```
+
+## Putting it all together, checking: section 4.4.1, exercises 1,2
+####Exercise 1
+####Modify the mergesort function described in this section so that it takes a logical argument (called decreasing) which causes sorting in decreasing order when set to TRUE.
+```{r}
+mergesort <- function (x,decreasing) {
+# Check for a vector that doesn't need sorting
+  len <-length(x)
+  if (len < 2) result <- x
+  else if (decreasing == TRUE) {  #code if label decreasing is true
+  # 2: sort x into result
+  # 2.1: split x in half
+    y <- x[1:(len %/% 2)]
+    z <- x[(len %/% 2 + 1):len]
+    # 2.2: sort y and z
+    y <- mergesort(y,TRUE)
+    z <- mergesort(z,TRUE)
+    # 2.3: merge y and z into a sorted result
+    result <- c()
+    # 2.3.1: while (some are left in both piles)
+    while (min(length(y), length(z)) > 0) {
+    #2.3.2: put the smallest first element on the end
+     # 2.3.3: remove it from y or z
+      if (y[1] > z[1]) {
+        result <- c(result, y[1])
+        y <- y[-1]
+        } else {
+          result <- c(result, z[1])
+          z <- z[-1]
+        }
+      }
+    # 2.3.4: put the leftovers onto the end of result
+    if (length(y) > 0)
+      result <- c(result, y)
+    else
+      result <- c(result, z)
+  }
+  else{ #code if label decreasing is false
+    y <- x[1:(len %/% 2)]
+    z <- x[(len %/% 2 + 1):len]
+    y <- mergesort(y,FALSE)
+    z <- mergesort(z,FALSE)
+    result <- c()
+    while (min(length(y), length(z)) > 0) {
+      if (y[1] < z[1]) {
+        result <- c(result, y[1])
+        y <- y[-1]
+        } else {
+          result <- c(result, z[1])
+          z <- z[-1]
+        }
+      }
+    if (length(y) > 0)
+      result <- c(result, y)
+    else
+      result <- c(result, z)
+  }
+  return(result)
+}
+```
+
+####Exercise 2
+####The equations $f(x,y)=0$ and $g(x,y)=0$ can be solved numerically using a form of Newton's method. Assign initial guesses to each of $x_0$ and $y_0$. Then perform the following iteration, for n = 1,2,...
+(a) Write a function which will perform this iteration.
+(b) Apply the function to the system
+x + y = 0
+x^2 + 2y^2 -2 = 0.
+Find the two solutions to this system analytically as a check on your
+numerical result.
+```{r}
+x0=2
+y0=2
+x<-x0
+y<-y0
+tolerance <- 0.001
+f <- x+y
+g <- x^2+2*y^2-2
+while (abs(f)+abs(g)>tolerance ){
+  f.primex <- 1 #derivative of f(x) by x
+  f.primey <- 1 #derivative of f(x) by y
+  g.primex <- 2*x #derivative of g(x) by x
+  g.primey <- 4*y #derivative of g(x) by x
+  d <- f.primex*g.primey-f.primey*g.primex
+  x <- x - (g.primey*f-f.primey*g)/d
+  y <- y - (f.primex*g-g.primex*f)/d
+  f <- x+y
+  g <- x^2+2*y^2-2
+}
+x
+y
+```
+
+Solving system of equasion analytically gives us result of $x=-\sqrt\frac{2}{3}$ and $y=\sqrt\frac{2}{3}$ which is -0.8164 and 0.8164 respectivelly. Code produce correct result
+
+##Chapter 4 exercises 1,2,3
+####Exercise 1
+####Write a function which will evaluate polynomials of the form $P(x)=c_n*x^{n-1}+c_{n-1}*x^{n-2}+...+c2x+c1$. Your function should take x and the vector of polynomial coefficients as arguments and it should return the value of the evaluated polynomial. Call this function directpoly().
+
+```{r}
+
+x=1
+vc <- c(2,3,4,5) # vector of coefficients Cn,Cn-1,...C1
+directpoly <- function(x,vc){
+  answer=0
+  l = length(vc)
+  r_vc <- tail(rev(vc), n=l-1) #reverse vector of coefficients and drop c1
+  for (i in 1:(l-1)){
+    p=x^i * r_vc[i]
+    answer = answer + p
+    }
+  return(answer+tail((vc), n=1))}
+directpoly(2,c(2,3,4,5))
+```
+
+####Exercise 2
+####Refer to the previous question. For moderate to large values of n, evaluation of a polynomial at x can be done more efficiently using Horner's
+Rule:
+
+(a) Set$a_n <- c_n$
+
+(b) For i = n-1,...1 set $a_i=a_{i+1}x +c_i$
+
+(c) Return a1. (This is the computed value of P(x).)
+
+Write an R function with arguments x and a vector of polynomial coefficients and which returns the value of the polynomial evaluated at x. Call the resulting function hornerpoly(). Ensure that your function returns an appropriate vector of values when x is a vector.
+```{r}
+hornerpoly<-function(x,vc){
+  l = length(vc)
+  r_vc <- rev(vc) #reverse vector of coefficients 
+  a<-c(numeric(l-1),r_vc[l])
+  for (i in (l-1):1){
+    a[i] <- a[i+1]*x + r_vc[i]
+  }
+  return(a[1])
+}
+hornerpoly(2,c(2,3,4,5))
+```
+
+
+####Exercise 3
+####Do some timings to compare the algorithms used in the previous two questions.
+####(a) In particular, try the following code:
+```{r}
+system.time(directpoly(x=seq(-10, 10, length=5000000), c(1, -2, 2, 3, 4, 6, 7)))
+system.time(hornerpoly(x=seq(-10, 10, length=5000000),c(1, -2, 2, 3, 4, 6, 7)))
+```
+Hornerpoly function works faster 
+
+####(b) What happens to the comparison when the number of polynomial coefficients is smaller? Try the polynomial
+$P(x) = 2x^2 + 17x -  3$
+```{r}
+directpoly(2,c(2,3,4,5))
+hornerpoly(2,c(2,3,4,5))
+```
+Result of directpoly and hornerpoly functions are the same
+
